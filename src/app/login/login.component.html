@@ -1,6 +1,13 @@
 <h1>Login</h1>
-Username
-<input type="text" class="form-control" id="username" [(ngModel)]="username">
-Password
-<input type="text" class="form-control" id="password" [(ngModel)]="password">
-<button type="button" class="btn btn-primary" (click)="login(username,password)">Login</button>
+<label for="ip_back">Ip del back end:</label><br>
+<input type="text" class="form-control" name="ip_back" id="ip_back" [(ngModel)]="ip_back" placeholder="localhost:8000">
+<br>
+
+<label for="username">Username:</label><br>
+<input type="text" class="form-control" id="username" name="username" [(ngModel)]="username">
+<br>
+<label for="password">Password:</label><br>
+<input type="text" class="form-control" id="password" name="password" [(ngModel)]="password">
+
+<br>
+<button type="button" class="btn btn-primary" (click)="login(username,password,ip_back)">Login</button>

@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>Bienvenido al duelo {{data.roomId}} </h1>
+<div mat-dialog-content>
+  <p>Aceptas?</p>
+
+  <div *ngIf="question">
+    <h1>pregunta</h1>
+    {{question}}
+    <!-- <input type="text" class="form-control" id="pregunta" [(ngModel)]="pregunta">-->
+    <select name="pregunta" id="pregunta" class="form-control" [(ngModel)]="pregunta">
+      <option value="option_1" selected>Opcion 1</option>
+      <option value="option_2" >Opcion 2</option>
+      <option value="option_3">Opcion 3</option>
+    </select>
+    <input type="text" class="form-control" id="bet" [(ngModel)]="time" hidden>
+  <button type="button" class="btn btn-primary" (click)="enviarRespuesta(pregunta, time)">respuesta</button>
+  
+  
+  
+  
+  </div>
+
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No</button>
+  <button mat-button (click)="duelAccept()">Ok</button>
+</div>

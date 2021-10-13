@@ -1,12 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { SocketService } from '../../services/socket.service';
+import { MatSliderModule } from '@angular/material/slider';
+import { NgModule } from '@angular/core';
 import {Router} from '@angular/router';
+import {MatFormField}  from '@angular/material/form-field';
+
+
+import {MatDialog,MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+
+
+export interface DialogData {
+    roomId: string;
+    userId: string;
+}
+
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.css']
+  styleUrls: ['./game.component.css'],
+  
 })
+
 
 export class GameComponent implements OnInit {
   title = 'front';
@@ -23,11 +38,16 @@ export class GameComponent implements OnInit {
   auth;
   id = Math.random().toString(36).substr(2, 9);
   roomID = "";
+  pregunta;
+  time;
   constructor(
     private socketService: SocketService
-    ,private router: Router
+    ,private router: Router,
+    public dialog: MatDialog
   ) { }
   
+  
+
   ngOnInit() {
     console.log("etoy en game")
     if (!localStorage.getItem('token')){
@@ -40,7 +60,7 @@ export class GameComponent implements OnInit {
     this.level = localStorage.getItem('level')
     this.username = localStorage.getItem('username')
 
-    this.socketService.onNewMessage().subscribe(msg => {
+    this.socketService.onNewMessage().subscribe((msg:any) => {
       console.log("Estoy en new message")
       this.room = JSON.parse(msg);
       this.room = this.room[0];
@@ -70,6 +90,13 @@ export class GameComponent implements OnInit {
 
     this.socketService.onNewRound().subscribe(round => {
       this.round = round;
+    })
+
+    this.socketService.duelNotice().subscribe(msg => {
+        console.log("suscribo al duelNotice", msg)
+        this.roomID = msg;
+        //abro el dialog con el room id una vez que llega el duel notice
+        this.openDialog(msg,this.userID)
     })
 
   }
@@ -115,5 +142,89 @@ export class GameComponent implements OnInit {
     }
   }
 
+
+  openDialog(roomId, userId): void {
+    const dialogRef = this.dialog.open(DuelDialogComponent, {
+      width: '250px',
+      data: {roomId: roomId, userId: userId}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Se cerro el dialog');
+      //this.animal = result;
+    });
+  }
+
+
+}
+
+@Component({
+    selector: 'duel.dialog',
+    templateUrl: 'duel.dialog.html',
+})
+export class DuelDialogComponent implements OnInit{
+
+    userID;
+    roomID;
+    question;
+    id = Math.random().toString(36).substr(2, 9);
+    pregunta;
+
+    constructor(
+        private socketService: SocketService,
+        public dialogRef: MatDialogRef<DuelDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: DialogData
+    ) {
+        this.roomID = data.roomId;
+        this.userID = data.userId;
+    }
+
+    ngOnInit() {
+        this.socketService.onDuelQuestion().subscribe(msg => {
+            console.log("Llego la pregunta al duelo", msg)
+            this.question = msg;
+
+            //question;
+            //abro el dialog con el room id una vez que llega el duel notice
+            //this.openDialog(msg,this.userID)
+        })
+
+        this.socketService.onDuelQuestionWon().subscribe(msg => {
+            console.log("Llego el resultado de la question", msg)
+            //question;
+            //abro el dialog con el room id una vez que llega el duel notice
+            //this.openDialog(msg,this.userID)
+        })
+
+
+        this.socketService.onDuelResult().subscribe(msg => {
+            console.log("Llego el resultador del duelo", msg)
+            //question;
+            //abro el dialog con el room id una vez que llega el duel notice
+            //this.openDialog(msg,this.userID)
+        })
+    }
+    
+    duelAccept(): void {
+        //Entro al duelo
+        let msg = {"roomID" : this.roomID, 'userID': this.userID}
+        console.log("acepto duelo con este msg")
+        console.log(msg)
+        this.socketService.aceptarDuelo(msg);
+    
+    }
+
+    enviarRespuesta(pregunta, time){
+        let newid = (this.userID) ? this.userID : this.id;
+        let msg = {"roomID" : this.roomID, "answer" : pregunta, 'userID': newid, "timeResponse": time}
+        this.socketService.enviarRespuestaDuelo(msg);
+    }
+
+
+    onNoClick(): void {
+        //Cierro el dialog
+        this.dialogRef.close();
+    }
+  
 }
 

@@ -25,12 +25,13 @@ export class AppComponent implements OnInit {
   roomID = "";
 
   constructor(
-    private socketService: SocketService
+    //private socketService: SocketService
 
   ) { }
   
   ngOnInit() {
-    this.socketService.onNewMessage().subscribe(msg => {
+    /*
+    this.socketService.onNewMessage().subscribe((msg:any) => {
       this.room = JSON.parse(msg);
       this.room = this.room[0];
       this.roomID = this.room.id;
@@ -59,37 +60,41 @@ export class AppComponent implements OnInit {
 
     this.socketService.onNewRound().subscribe(round => {
       this.round = round;
-    })
+    })*/
 
   }
 
   doAuth(token){
-    this.socketService.auth(token);
+    //this.socketService.auth(token);
   }
 
   newUser(username) {
     let newid = (this.userID) ? this.userID : this.id;
     var msg = {'roomId': this.room.id, 'user': {'name': username, 'level': 'Virtuoso', 'userID': newid }};
-    this.socketService.join(msg);
+    //this.socketService.join(msg);
 
   }
 
   searchGame(level) {
     console.log(level);
-    this.socketService.searchGame(level);
+    //this.socketService.searchGame(level);
   }
 
 
   userBet(bet){
     let newid = (this.userID) ? this.userID : this.id;
     let msg = {"roomID": this.roomID, "value": bet, 'userID': newid, 'pairing': this.pairing};
-    this.socketService.userBet(msg);
+    //this.socketService.userBet(msg);
   }
 
   enviarRespuesta(pregunta, time){
     let newid = (this.userID) ? this.userID : this.id;
+    //El time lo creo automaticamente aca
+    var dateLocal = new Date();
+    time = dateLocal.getMilliseconds();
+    
     let msg = {"roomID" : this.roomID, "answer" : pregunta, 'userID': newid, "timeResponse": time}
-    this.socketService.enviarRespuesta(msg);
+    //this.socketService.enviarRespuesta(msg);
   }
 
   onChange(isChecked: boolean){

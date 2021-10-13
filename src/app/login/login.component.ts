@@ -3,6 +3,10 @@ import {Observable} from "rxjs/Observable";
 import {HttpClient,HttpHeaders} from "@angular/common/http";
 import {Router} from '@angular/router';
 import 'rxjs/Rx';
+//import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+
 import * as _ from 'lodash';
 
 
@@ -25,8 +29,11 @@ interface User {
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-
+  username:'';
+  password:'';
+  ip_back: '';
   user$: Observable<User>;
+  //user;
 
   constructor(private http:HttpClient,private router: Router) {
   }
@@ -35,17 +42,26 @@ export class LoginComponent implements OnInit {
     
   }
 
-  login(username, password){
+  login(username, password,ip_back){
     //this.socketService.auth(token);
     console.log('username', username)
     console.log('password', password)
+    console.log('ip_back', ip_back)
+    //La ip que pone, la voy a guardar en el localstorage
+    localStorage.setItem('ip_back', ip_back);
     /*
     this.user$ = this.http
     .get<User>("/courses.json")
     .map(data => _.values(data))
     .do(console.log);*/
 
-    this.http.post("http://35.247.214.58:8000/users/signin",
+    let ip = '';
+    ip = localStorage.getItem('ip_back');
+
+
+
+    this.http.post('http://'+ ip + '/users/signin',
+    //this.http.post("http://localhost:8000/users/signin",
     {
     "email": username,
     "password": password,

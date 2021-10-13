@@ -1,4 +1,4 @@
-{
+/*{
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
@@ -15,6 +15,59 @@
     ],
     "lib": [
       "es2017",
+      "dom"
+    ]
+  }
+}*/
+
+/*
+{
+  "compilerOptions": {
+      "module": "commonjs",
+      "target": "es5",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "noEmitHelpers": true,
+      "noEmitOnError": true,
+      "lib": [
+          "es6",
+          "dom",
+          "es2015.iterable"
+      ],
+      "baseUrl": ".",
+      "paths": {
+          "~/*": [
+              "src/*"
+          ],
+          "*": [
+              "./node_modules/tns-core-modules/*",
+              "./node_modules/*"
+          ]
+      }
+  },
+  "exclude": [
+      "node_modules",
+      "platforms"
+  ]
+}
+*/
+
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "baseUrl": "src",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2016",
       "dom"
     ]
   }
